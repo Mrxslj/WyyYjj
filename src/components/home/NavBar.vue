@@ -48,6 +48,7 @@
           class="QRcode"
           :src="this.qrimgImg">
         </el-image>
+        <div class="LoginMessage">{{}}</div>
       </div>
   </div>
 
@@ -105,9 +106,6 @@ export default {
     getQRLogin(){
         // 二维码登录
         QRLogin(this.unikey).then(res => {
-          console.log(res);
-          console.log(res.data.code);
-          console.log(res.data.message);
           this.QRisLoad = true
         })
     },
@@ -131,9 +129,15 @@ export default {
       // 二维码登录
       setInterval(async() => {
         QRLogin(this.unikey,this.nowTime).then(res => {
-          console.log(res);
-          console.log(res.data.code);
-          console.log(res.data.message);
+          let code = res.data.code
+          // console.log(code);
+          if(code === 801){
+            console.log("等待用户扫码");
+          } else if(code === 802){
+            console.log("等待用户确认");
+          } else if(code === 803){
+            console.log("登录成功");
+          }
         })
        },2000)
     }
