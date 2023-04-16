@@ -43,12 +43,14 @@
 
       <!-- 登录界面 -->
       <div class="loginScreen" v-show="loginShow">
-        <div>登录界面</div>
+        <div class="loginTitle">扫码登录</div>
         <el-image 
           class="QRcode"
           :src="this.qrimgImg">
         </el-image>
-        <div class="LoginMessage">{{}}</div>
+        <span class="loginPrompt">使用<p>网易云音乐APP</p>扫码登录</span>
+        <i class="el-icon-close"></i>
+        <div :plain="true"></div>
       </div>
   </div>
 
@@ -70,7 +72,8 @@ export default {
       unikey: "",
       qrimgImg: "",
       nowTime:new Date().getTime(),
-      QRisLoad:false
+      QRisLoad:false,
+      loginMessage:"",
     }
   },
   mounted(){
@@ -132,13 +135,21 @@ export default {
           let code = res.data.code
           // console.log(code);
           if(code === 801){
-            console.log("等待用户扫码");
+            // 等待
+            console.log(res.data.message);
+            
           } else if(code === 802){
-            console.log("等待用户确认");
+            console.log(res.data.message);
+            this.$message(res.data.message);
           } else if(code === 803){
-            console.log("登录成功");
+            console.log(res.data.message);
+            this.$message(res.data.message);
+            this.loginShow = false
+          } else if(code === 800){
+            console.log(res.data.message);
           }
-        })
+          this.loginMessage = res.data.message
+        })        
        },2000)
     }
   }
@@ -362,11 +373,36 @@ input::-webkit-input-placeholder{
   position: absolute;
   left: 50%;
   top: 125px;
+  text-align: center;
   width: 260px;
   height: 400px;
   background-color: #fff;
   z-index: 50;
   border-radius: 10px;
   box-shadow: 2px 2px  #d3d3d3;
+}
+.loginTitle{
+  margin-top: 50px;
+  margin-bottom: 15px;
+  font-size: 25px;
+  color:#000;
+}
+.loginPrompt{
+  display: inline-block;
+  margin: 0 auto;
+  font-size: 14px;
+}
+.loginPrompt p {
+  display: inline-block;
+  margin: 0;
+  color: 	#4169E1;
+}
+
+.el-icon-close{
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  font-size: 22px;
+  opacity: .6;
 }
 </style>
