@@ -42,15 +42,19 @@
       </div>
 
       <!-- 登录界面 -->
-      <div class="loginScreen">
-        <div></div>
+      <div class="loginScreen" v-show="loginShow">
+        <div>登录界面</div>
+        <el-image 
+          class="QRcode"
+          :src="this.qrimgImg">
+        </el-image>
       </div>
   </div>
 
 </template>
 <link rel="stylesheet" href="@/assets/iconfont/iconfont.css"></link>
 <script>
-import { getHotsearch,login } from '@/network/homedata'
+import { getHotsearch,login,getImg,QRLogin } from '@/network/homedata'
 
 
 export default {
@@ -61,10 +65,16 @@ export default {
       PromptShow: false,
       loading: true,
       hotsearchList: [],
-      loginShow: false
+      loginShow: false,
+      unikey: "",
+      qrimgImg: "",
+      nowTime:new Date().getTime(),
+      QRisLoad:false
     }
   },
-
+  mounted(){
+    this.getQRkey()
+  },
   methods:{
     PromptBoxShow(){
       this.PromptShow = true
@@ -72,10 +82,38 @@ export default {
     PromptNotShow() {
       this.PromptShow = false
     },
-    loginUser(){
+    getQRkey(){
+       // 二维码 key 生成接口
       login().then(res => {
-        console.log(res.data);
+        console.log(res.data.data.unikey); //e597a89d-ba33-42fc-a20d-225ba210f6d0
+        // console.log(res);
+       this.unikey = res.data.data.unikey
+       this.getQRimg(this.unikey)
       })
+    },
+
+    getQRimg(key){
+        // 二维码生成接口
+        getImg(this.unikey).then(res => {
+        this.qrimgImg = res.data.data.qrimg
+        console.log(res.data.data.qrimg);
+        // console.log(this.qrimgImg);
+        this.getQRLogin()
+      })
+    },
+
+    getQRLogin(){
+        // 二维码登录
+        QRLogin(this.unikey).then(res => {
+          console.log(res);
+          console.log(res.data.code);
+          console.log(res.data.message);
+          this.QRisLoad = true
+        })
+    },
+
+    show(){
+      this.loginShow= true
     }
   },
   created() {
@@ -88,6 +126,16 @@ export default {
           this.loading = false
         })
       }
+    },
+    QRisLoad:function (){
+      // 二维码登录
+      setInterval(async() => {
+        QRLogin(this.unikey,this.nowTime).then(res => {
+          console.log(res);
+          console.log(res.data.code);
+          console.log(res.data.message);
+        })
+       },2000)
     }
   }
 }
@@ -303,5 +351,18 @@ input::-webkit-input-placeholder{
   color: #fff;
   margin-left: 8px;
   font-size: 14px;
+}
+
+/* 登录二维码 */
+.loginScreen{
+  position: absolute;
+  left: 50%;
+  top: 125px;
+  width: 260px;
+  height: 400px;
+  background-color: #fff;
+  z-index: 50;
+  border-radius: 10px;
+  box-shadow: 2px 2px  #d3d3d3;
 }
 </style>
