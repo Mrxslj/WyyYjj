@@ -38,7 +38,8 @@
 
       <div class="userlogin">
         <el-avatar icon="el-icon-user-solid" :size="34" ></el-avatar>
-        <span style="font-size: 12px;font-family: 微软雅黑;"  @click="show">登录</span>
+        <span style="font-size: 12px;font-family: 微软雅黑;"  @click="show" v-show="isLogin">登录</span>
+        <span style="font-size: 12px;font-family: 微软雅黑;" v-show="isQuit">退出</span>
       </div>
 
       <!-- 登录界面 -->
@@ -49,7 +50,7 @@
           :src="this.qrimgImg">
         </el-image>
         <span class="loginPrompt">使用<p>网易云音乐APP</p>扫码登录</span>
-        <i class="el-icon-close"></i>
+        <i class="el-icon-close" @click="closeLogin"></i>
         <div :plain="true"></div>
       </div>
   </div>
@@ -57,8 +58,9 @@
 </template>
 <link rel="stylesheet" href="@/assets/iconfont/iconfont.css"></link>
 <script>
-import { getHotsearch,login,getImg,QRLogin } from '@/network/homedata'
-
+import { getHotsearch,} from '@/network/homedata'
+import {login,getImg,QRLogin,LogonStatus } from '@/network/login'
+import {AccountInformation} from '@/network/userDate'
 
 export default {
   name: "navbar",
@@ -74,6 +76,10 @@ export default {
       nowTime:new Date().getTime(),
       QRisLoad:false,
       loginMessage:"",
+      isLogin: true,
+      isQuit: false,
+      Stats:[]
+
     }
   },
   mounted(){
@@ -89,18 +95,21 @@ export default {
     getQRkey(){
        // 二维码 key 生成接口
       login().then(res => {
-        console.log(res.data.data.unikey); //e597a89d-ba33-42fc-a20d-225ba210f6d0
+        // console.log(res.data.data.unikey); //e597a89d-ba33-42fc-a20d-225ba210f6d0
         // console.log(res);
        this.unikey = res.data.data.unikey
        this.getQRimg(this.unikey)
       })
+    },
+    closeLogin(){
+      this.loginShow = false
     },
 
     getQRimg(key){
         // 二维码生成接口
         getImg(this.unikey).then(res => {
         this.qrimgImg = res.data.data.qrimg
-        console.log(res.data.data.qrimg);
+        // console.log(res.data.data.qrimg);
         // console.log(this.qrimgImg);
         this.getQRLogin()
       })
@@ -110,11 +119,38 @@ export default {
         // 二维码登录
         QRLogin(this.unikey).then(res => {
           this.QRisLoad = true
+          this.Stats = res.data
         })
     },
-
     show(){
       this.loginShow= true
+    },
+    getLoginStatus(){
+      LogonStatus(sessionStorage.getItem('cookie')).then(res => {
+        // console.log(res);
+        if(res.status === 200){
+          this.isQuit = false
+          this.isLogin = false
+          console.log(res);
+          console.log(sessionStorage.getItem('cookie'));
+          sessionStorage.getItem('cookie')
+          sessionStorage.setItem('nickname', res.data.data.profile.nickname) //用户名称
+          sessionStorage.setItem('avatarUrl', res.data.data.profile.avatarUrl)
+          sessionStorage.setItem('id', res.data.data.account.id)
+          // console.log(sessionStorage.getItem('cookie'));
+          
+        } else {
+          console.log("登录失败");
+        }
+    })
+    },
+    getUserMessage(){
+      AccountInformation(this.Stats.cookie).then(res => {
+        console.log(res);
+        console.log(this.Stats);
+        
+        console.log(111);
+      })
     }
   },
   created() {
@@ -130,7 +166,7 @@ export default {
     },
     QRisLoad:function (){
       // 二维码登录
-      setInterval(async() => {
+      let interval = setInterval(async() => {
         QRLogin(this.unikey,this.nowTime).then(res => {
           let code = res.data.code
           // console.log(code);
@@ -142,13 +178,18 @@ export default {
             console.log(res.data.message);
             this.$message(res.data.message);
           } else if(code === 803){
-            console.log(res.data.message);
+            // console.log(res.data.message);
             this.$message(res.data.message);
-            this.loginShow = false
+            this.loginShow = false,
+            sessionStorage.setItem('cookie', this.Stats.cookie)
+            this.getLoginStatus()
+            // this.getUserMessage()
+            clearInterval(interval)
           } else if(code === 800){
             console.log(res.data.message);
           }
           this.loginMessage = res.data.message
+         
         })        
        },2000)
     }

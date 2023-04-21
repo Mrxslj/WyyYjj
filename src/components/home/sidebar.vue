@@ -15,8 +15,11 @@
               <span class="iconfont icon-shipin"></span>
               <span>推荐视频</span>
             </li>
-
         </div>
+      </ul>
+      <ul class="list">
+        <p>我的音乐</p>
+        <span></span>
       </ul>
     </div>
   </el-aside>

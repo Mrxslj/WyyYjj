@@ -5,8 +5,9 @@
         <router-link :to="{path: 'personality'}" class="link">
           <div class="titleItem" :class="{activeTitle: current === 1}" @click="itemClick(1)">个性推荐</div>
         </router-link>
-        <div class="titleItem" :class="{activeTitle: current === 2}" @click="itemClick(2)">歌单</div>
-
+        <router-link :to="{path: 'playlist'}" class="link">
+          <div class="titleItem" :class="{activeTitle: current === 2}" @click="itemClick(2)">歌单</div>
+        </router-link>
         <div class="titleItem" :class="{activeTitle: current === 3}" @click="itemClick(3)">排行榜</div>
 
         <div class="titleItem" :class="{activeTitle: current === 4}" @click="itemClick(4)">歌手</div>

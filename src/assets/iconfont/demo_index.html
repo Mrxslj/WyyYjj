@@ -55,6 +55,18 @@
           <ul class="icon_lists dib-box">
           
             <li class="dib">
+              <span class="icon iconfont">&#xe607;</span>
+                <div class="name">用户</div>
+                <div class="code-name">&amp;#xe607;</div>
+              </li>
+          
+            <li class="dib">
+              <span class="icon iconfont">&#xe629;</span>
+                <div class="name">右三角</div>
+                <div class="code-name">&amp;#xe629;</div>
+              </li>
+          
+            <li class="dib">
               <span class="icon iconfont">&#xe64e;</span>
                 <div class="name">视频</div>
                 <div class="code-name">&amp;#xe64e;</div>
@@ -78,12 +90,6 @@
                 <div class="code-name">&amp;#xeb15;</div>
               </li>
           
-            <li class="dib">
-              <span class="icon iconfont">&#xe623;</span>
-                <div class="name">用户-圆</div>
-                <div class="code-name">&amp;#xe623;</div>
-              </li>
-          
           </ul>
           <div class="article markdown">
           <h2 id="unicode-">Unicode 引用</h2>
@@ -102,9 +108,10 @@
 <pre><code class="language-css"
 >@font-face {
   font-family: 'iconfont';
-  src: url('iconfont.woff2?t=1681391718503') format('woff2'),
-       url('iconfont.woff?t=1681391718503') format('woff'),
-       url('iconfont.ttf?t=1681391718503') format('truetype');
+  src: url('iconfont.woff2?t=1682086605815') format('woff2'),
+       url('iconfont.woff?t=1682086605815') format('woff'),
+       url('iconfont.ttf?t=1682086605815') format('truetype'),
+       url('iconfont.svg?t=1682086605815#iconfont') format('svg');
 }
 </code></pre>
           <h3 id="-iconfont-">第二步：定义使用 iconfont 的样式</h3>
@@ -129,6 +136,24 @@
       </div>
       <div class="content font-class">
         <ul class="icon_lists dib-box">
+          
+          <li class="dib">
+            <span class="icon iconfont icon-yonghu1"></span>
+            <div class="name">
+              用户
+            </div>
+            <div class="code-name">.icon-yonghu1
+            </div>
+          </li>
+          
+          <li class="dib">
+            <span class="icon iconfont icon-yousanjiao"></span>
+            <div class="name">
+              右三角
+            </div>
+            <div class="code-name">.icon-yousanjiao
+            </div>
+          </li>
           
           <li class="dib">
             <span class="icon iconfont icon-shipin"></span>
@@ -166,15 +191,6 @@
             </div>
           </li>
           
-          <li class="dib">
-            <span class="icon iconfont icon-yonghu-yuan"></span>
-            <div class="name">
-              用户-圆
-            </div>
-            <div class="code-name">.icon-yonghu-yuan
-            </div>
-          </li>
-          
         </ul>
         <div class="article markdown">
         <h2 id="font-class-">font-class 引用</h2>
@@ -201,6 +217,22 @@
       </div>
       <div class="content symbol">
           <ul class="icon_lists dib-box">
+          
+            <li class="dib">
+                <svg class="icon svg-icon" aria-hidden="true">
+                  <use xlink:href="#icon-yonghu1"></use>
+                </svg>
+                <div class="name">用户</div>
+                <div class="code-name">#icon-yonghu1</div>
+            </li>
+          
+            <li class="dib">
+                <svg class="icon svg-icon" aria-hidden="true">
+                  <use xlink:href="#icon-yousanjiao"></use>
+                </svg>
+                <div class="name">右三角</div>
+                <div class="code-name">#icon-yousanjiao</div>
+            </li>
           
             <li class="dib">
                 <svg class="icon svg-icon" aria-hidden="true">
@@ -232,14 +264,6 @@
                 </svg>
                 <div class="name">用户</div>
                 <div class="code-name">#icon-yonghu</div>
-            </li>
-          
-            <li class="dib">
-                <svg class="icon svg-icon" aria-hidden="true">
-                  <use xlink:href="#icon-yonghu-yuan"></use>
-                </svg>
-                <div class="name">用户-圆</div>
-                <div class="code-name">#icon-yonghu-yuan</div>
             </li>
           
           </ul>
