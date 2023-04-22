@@ -1,27 +1,31 @@
 <template>
   <div class="playlist">
-
     <div class="indexTitle" >
       <div class="playlisTags" >{{TagsName}} ></div>
       <div class="hotTitele" v-for="(item, index) in HotPlatlistArray">
-        <div class="tags">{{item.name}}</div>
+        <div class="tags" 
+        @click="tagsClick(item.name,index)" 
+        :class="{'active':isActive==index}"
+        >{{item.name}}</div>
        
       </div>
     </div>
 
     <!-- 内容 -->
     <div class="PlaylistContent">
-      <div class="itemBox" v-for="(item, index) in playlistArray">
-          <el-image
-          :src="item.coverImgUrl"
-          class="itemImage">
-          </el-image>
-          <div class="playlistTitele">{{item.name }}</div>
-          <div class="Playback"><span class="iconfont icon-yousanjiao"></span>{{ item.playCount | playvolume}}</div>
-          <div class="username"><span class="iconfont icon-yonghu1"></span>{{ item.creator.nickname }}</div>
-      </div>
+        <div class="itemBox" v-for="(item, index) in playlistArray" @click="Jump">
+            <el-image
+            :src="item.coverImgUrl"
+            class="itemImage">
+            </el-image>
+            <div class="playlistTitele">{{item.name }}</div>
+            <div class="Playback"><span class="iconfont icon-yousanjiao"></span>{{ item.playCount | playvolume}}</div>
+            <div class="username"><span class="iconfont icon-yonghu1"></span>{{ item.creator.nickname }}</div>
+        </div>
     </div>
+
   </div>
+  
 </template>
 
 <script>
@@ -35,11 +39,14 @@ export default {
       playlisTags:"",
       TagsName:"全部歌单",
       Pages:1,
-      playlistArray:[]
+      playlistArray:[],
+      isActive:0
+
     }
   },
   created(){
-    this.getplayInfo()
+    this.getplayInfo(this.TagsName)
+    
   },
   mounted(){
     setTimeout(() =>{
@@ -58,7 +65,7 @@ export default {
         // console.log(res);
         this.playlistTagesArray = res.data
         this.playlisTags = res.data.all.name
-        console.log(this.playlistTagesArray);
+        // console.log(this.playlistTagesArray);
     })
   },
   getHotPlatlist(){
@@ -68,12 +75,31 @@ export default {
       // console.log(this.HotPlatlistArray);
     })
   },
-  getplayInfo(){
-    playInfo(this.TagsName,this.pagination).then(res => {
-      // console.log(res);
+  getplayInfo(tagName){
+    playInfo(tagName,this.pagination).then(res => {
+      // console.log(tagName);
       this.playlistArray = res.data.playlists
-      console.log(this.playlistArray);
+      // console.log(this.playlistArray);
     })
+  },
+  tagsClick(tagsname,index){
+   this.getplayInfo(tagsname)
+    this.tagsSelected(index)
+  },
+  tagsSelected(num){
+    if(num === 0 ){
+      this.isActive = 0
+    } else {
+      for(let i = 0; i< num; i++){
+        switch(i){
+          case i : this.isActive = num;
+          break;
+        }
+      }
+    }
+  },
+  Jump(){
+    this.$router.push('/PlaylistPage');
   }
 },
 filters: {
@@ -122,10 +148,18 @@ filters: {
  }
  .tags{
   /* display: inline-block; */
-  margin: 0 10px;
-  font-size: 13px;
+  margin: 0 0px;
+  font-size: 12px;
   opacity: .8;
   cursor:pointer;
+  padding: 3px 10px;
+  
+ }
+ .active{
+  color: red;
+  background-color: rgba(240,128,128,.2);
+  border-radius: 20px;
+  opacity: .7;
  }
  .PlaylistContent{
   margin-top: 15px;
