@@ -5,6 +5,7 @@ const home = () => import('@/views/home/discovermusic')
 const personality = () => import('@/components/home/DiscoverChildview/personality')
 const playlist = () => import('@/components/home/DiscoverChildview/playlist')
 const PlaylistPage = () => import('@/components/PlaylistPage')
+const listofsongs = () => import('@/components/listofsongs')
 Vue.use(VueRouter)
 
 const routes = [
@@ -31,8 +32,19 @@ const routes = [
     ]
   },
   {
-    path:'/PlaylistPage',
-    component:PlaylistPage
+    path:'/PlaylistPage/:id',
+    name:'PlaylistPage',
+    component:PlaylistPage,
+    children:[
+      {
+        path:'',
+        redirect: 'listofsongs'
+      },
+      {
+        path:'listofsongs',
+        component:listofsongs
+      }
+    ]
   }
 ]
 

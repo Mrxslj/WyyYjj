@@ -1,7 +1,54 @@
 <template>
   <div class="playlist">
     <div class="indexTitle" >
-      <div class="playlisTags" >{{TagsName}} ></div>
+      <!-- 歌单列表 -->
+      <div class="playlisTags" @click="allTagsShow">{{TagsName}} ></div>
+      <div class="allTags" v-show="isTagsAll">
+        <div class="allTagName" @click="getTagPlay(TagsName)">{{ TagsName }}</div>
+        <div class="TagsListAll">
+          <!-- 语种 -->
+          <div class="TagsGroup">
+            <div class="group"><span class="iconfont icon-diqiu"></span>{{this.tagsGroup[0]}}</div>
+            <div class="taglist">
+            <div class="tag" v-for="(item, index) in LanguagesTags"
+             @click="getTagPlay(item,index)"><div>{{item}}</div></div>
+            </div>
+          </div>
+          <!-- 风格 -->
+          <div class="TagsGroup">
+            <div class="group"><span class="iconfont icon-gangqin"></span>{{this.tagsGroup[1]}}</div>
+            <div class="taglist">
+            <div class="tag"  v-for="(item, index) in styleTags"
+            @click="getTagPlay(item,index)"><div>{{item}}</div></div>
+            </div>
+          </div>
+          <!-- 场景 -->
+          <div class="TagsGroup">
+            <div class="group"><span class="iconfont icon-kafei"></span>{{this.tagsGroup[2]}}</div>
+            <div class="taglist">
+            <div class="tag" v-for="(item, index) in scenarioTags"
+            @click="getTagPlay(item,index)"><div>{{item}}</div></div>
+            </div>
+          </div>
+          <!-- 情感 -->
+          <div class="TagsGroup">
+            <div class="group"><span class="iconfont icon-xiaolian"></span>{{this.tagsGroup[3]}}</div>
+            <div class="taglist">
+            <div class="tag" v-for="(item, index) in emotionTags"
+            @click="getTagPlay(item,index)"><div>{{item}}</div></div>
+            </div>
+          </div>
+          <!-- 主题 -->
+          <div class="TagsGroup">
+            <div class="group"><span class="iconfont icon-caidan"></span>{{this.tagsGroup[4]}}</div>
+            <div class="taglist">
+            <div class="tag" v-for="(item, index) in topicTags"
+            @click="getTagPlay(item,index)"><div>{{item}}</div></div>
+            </div>
+          </div>  
+          </div>
+      </div>
+      <!-- 热门歌单列表 -->
       <div class="hotTitele" v-for="(item, index) in HotPlatlistArray">
         <div class="tags" 
         @click="tagsClick(item.name,index)" 
@@ -13,7 +60,7 @@
 
     <!-- 内容 -->
     <div class="PlaylistContent">
-        <div class="itemBox" v-for="(item, index) in playlistArray" @click="Jump">
+        <div class="itemBox" v-for="(item, index) in playlistArray" @click="Jump(item.id)">
             <el-image
             :src="item.coverImgUrl"
             class="itemImage">
@@ -30,6 +77,7 @@
 
 <script>
 import {playlist, HotPlatlist, playInfo} from '@/network/PlaylistData'
+
 export default {
   name:'playlist',
   data(){
@@ -40,32 +88,48 @@ export default {
       TagsName:"全部歌单",
       Pages:1,
       playlistArray:[],
-      isActive:0
-
+      isActive:0,
+      tagsGroup:{},
+      tagsList:[],
+      LanguagesTags:[], //语言
+      styleTags:[], //风格
+      scenarioTags:[], //场景
+      emotionTags:[], //情感
+      topicTags:[], //主题
+      isTagsAll:false
     }
   },
-  created(){
-    this.getplayInfo(this.TagsName)
-    
-  },
   mounted(){
+    
     setTimeout(() =>{
       this.getplaylist(),
-      this.getHotPlatlist()
+      this.getHotPlatlist(),
+      this.getplayInfo(this.TagsName)
     },800)
+    
   },
   computed:{
     pagination(){
       return (this.Pages-1)*50
     },
+
   },
   methods:{
     getplaylist(){
       playlist().then(res => {
-        // console.log(res);
         this.playlistTagesArray = res.data
         this.playlisTags = res.data.all.name
-        // console.log(this.playlistTagesArray);
+        this.tagsGroup = res.data.categories
+        this.tagsList = res.data.sub
+        console.log(this.playlistTagesArray);
+        console.log(this.tagsList.length);
+        this.getallTags()
+        console.log(this.LanguagesTags);
+        console.log(this.styleTags);
+        console.log(this.scenarioTags);
+        console.log(this.emotionTags);
+        console.log(this.topicTags);
+        // console.log(this.playlisTags);
     })
   },
   getHotPlatlist(){
@@ -98,35 +162,44 @@ export default {
       }
     }
   },
-  Jump(){
-    this.$router.push('/PlaylistPage');
-  }
-},
-filters: {
-	playvolume:function(arg){
-			if(arg.toString().length>=13){
-				// return arg/1000000000000+"万亿"
-				const volume= arg/1000000000000
-				const realVal = parseFloat(volume).toFixed(0);
-				return realVal+"万亿"
-				
-			}else if(arg.toString().length>=9){
-				const volume= arg/100000000
-				const realVal = parseFloat(volume).toFixed(0);
-				return realVal+"亿"
-			}else if(arg.toString().length>=4){
-				const volume= arg/10000
-				const realVal = parseFloat(volume).toFixed(0);
-				return realVal+"万"
-			}
+  // 点击歌单进行跳转 并且把歌单id传给 歌单详情页
+  Jump(id){
+    this.$router.push('/PlaylistPage/' + id);
+    this.$store.commit('setplaylistID', id)
+    // this.$store.commit('PlaylistInformation', )
+  },
+  getallTags(){
+    for(let i=0; i<this.tagsList.length; i++ ){
+      switch(this.tagsList[i].category){
+        case 0: this.LanguagesTags.push(this.tagsList[i].name)
+        break;
+        case 1: this.styleTags.push(this.tagsList[i].name)
+        break;
+        case 2: this.scenarioTags.push(this.tagsList[i].name)
+        break;
+        case 3: this.emotionTags.push(this.tagsList[i].name)
+        break;
+        case 4: this.topicTags.push(this.tagsList[i].name)
+        break;
+      }
+      
     }
   },
+  allTagsShow(){
+    this.isTagsAll = true
+  },
+  getTagPlay(tagsname,index){
+    this.getplayInfo(tagsname)
+    this.isTagsAll = false
+  }
+},
 }
 </script>
 
 <style>
  .playlist{
   margin: 5px 40px;
+  font-family: 微软雅黑;
   }
  .indexTitle {
   display:flex;
@@ -212,5 +285,44 @@ filters: {
 }
 .username span{
   margin-right: 0px;
+}
+.allTags{
+  position: absolute;
+  left: 345px;
+  top: 185px;
+  z-index: 50;
+  background-color: #fff;
+  width: 756px;
+  height: 755px;
+  /* 设置div阴影 */
+  box-shadow: 0px 0px 3px #dcdcdc;
+  /* 设置div圆角 */
+  border-radius: 2px;
+}
+.allTagName{
+  padding-left: 30px;
+  height: 60px;
+  line-height: 60px;
+  border-bottom: 1px solid #dcdcdc;
+}
+.TagsListAll{
+  margin-left: 20px;
+  margin-top: 20px;
+}
+.TagsGroup{
+    display: block;
+    margin-top: 20px;
+}
+.group{
+  display: inline-block;
+  margin-right: 70px;
+}
+.taglist{
+  display: inline;
+}
+.tag{
+  display: inline-block;
+  width: 120px;
+  margin-top: 20px;
 }
 </style>

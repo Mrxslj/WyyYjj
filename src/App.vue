@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <nav-bar/>
+    <nav-bar id="navbar"/>
 
     <el-container id="home-container">
       <sidebar></sidebar>

@@ -37,7 +37,9 @@
       </transition>
 
       <div class="userlogin">
-        <el-avatar icon="el-icon-user-solid" :size="34" ></el-avatar>
+        <el-avatar icon="el-icon-user-solid" :size="34" v-if="useravatarshow != false"></el-avatar>
+        <el-image :src="useravatar" class="avatar" v-else></el-image>
+        <div class="username">{{ username }}</div>
         <span style="font-size: 12px;font-family: 微软雅黑;"  @click="show" v-show="isLogin">登录</span>
         <span style="font-size: 12px;font-family: 微软雅黑;" v-show="isQuit">退出</span>
       </div>
@@ -60,7 +62,7 @@
 <script>
 import { getHotsearch,} from '@/network/homedata'
 import {login,getImg,QRLogin,LogonStatus } from '@/network/login'
-import {AccountInformation} from '@/network/userDate'
+import {AccountInformation, subCount} from '@/network/userDate'
 
 export default {
   name: "navbar",
@@ -78,8 +80,10 @@ export default {
       loginMessage:"",
       isLogin: true,
       isQuit: false,
-      Stats:[]
-
+      Stats:[],
+      useravatar:sessionStorage.getItem('avatarUrl'),
+      useravatarshow:false,
+      username:sessionStorage.getItem('nickname'),
     }
   },
   mounted(){
@@ -109,8 +113,6 @@ export default {
         // 二维码生成接口
         getImg(this.unikey).then(res => {
         this.qrimgImg = res.data.data.qrimg
-        // console.log(res.data.data.qrimg);
-        // console.log(this.qrimgImg);
         this.getQRLogin()
       })
     },
@@ -118,12 +120,13 @@ export default {
     getQRLogin(){
         // 二维码登录
         QRLogin(this.unikey).then(res => {
-          this.QRisLoad = true
-          this.Stats = res.data
+          this.QRisLoad = false
+          
         })
     },
     show(){
       this.loginShow= true
+      this.QRisLoad = true
     },
     getLoginStatus(){
       LogonStatus(sessionStorage.getItem('cookie')).then(res => {
@@ -135,23 +138,18 @@ export default {
           console.log(sessionStorage.getItem('cookie'));
           sessionStorage.getItem('cookie')
           sessionStorage.setItem('nickname', res.data.data.profile.nickname) //用户名称
-          sessionStorage.setItem('avatarUrl', res.data.data.profile.avatarUrl)
-          sessionStorage.setItem('id', res.data.data.account.id)
+          sessionStorage.setItem('avatarUrl', res.data.data.profile.avatarUrl) //用户头像
+          sessionStorage.setItem('id', res.data.data.account.id) //用户id
+          this.useravatarshow = true //显示用户头像
           // console.log(sessionStorage.getItem('cookie'));
           
+
         } else {
           console.log("登录失败");
         }
     })
     },
-    getUserMessage(){
-      AccountInformation(this.Stats.cookie).then(res => {
-        console.log(res);
-        console.log(this.Stats);
-        
-        console.log(111);
-      })
-    }
+   
   },
   created() {
   },
@@ -178,12 +176,13 @@ export default {
             console.log(res.data.message);
             this.$message(res.data.message);
           } else if(code === 803){
-            // console.log(res.data.message);
+            // 登录成功后 获取到登录状态的cookie
+            this.Stats = res.data
+            console.log(res.data.message); // 打印登录状态
             this.$message(res.data.message);
             this.loginShow = false,
             sessionStorage.setItem('cookie', this.Stats.cookie)
             this.getLoginStatus()
-            // this.getUserMessage()
             clearInterval(interval)
           } else if(code === 800){
             console.log(res.data.message);
@@ -445,5 +444,17 @@ input::-webkit-input-placeholder{
   top: 6px;
   font-size: 22px;
   opacity: .6;
+}
+.avatar{
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+.username{
+  width: 90px;
+  height: 20px;
+  font-size: 12px;
+  color: #fff;
+  margin-left: 10px;
 }
 </style>

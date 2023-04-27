@@ -11,13 +11,12 @@ export function AccountInformation(cookie) {
 }
 
 // 获取用户歌单
-export function subCount (ID,limit,offset){
+export function subCount (uid,cookie){
   return request ({
     url:'/user/playlist',
     params:{
-      ID,
-      limit,
-      offset
+      uid,
+      cookie
     }
   })
 }

@@ -1,9 +1,9 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4012464 */
-  src: url('iconfont.woff2?t=1682086605815') format('woff2'),
-       url('iconfont.woff?t=1682086605815') format('woff'),
-       url('iconfont.ttf?t=1682086605815') format('truetype'),
-       url('iconfont.svg?t=1682086605815#iconfont') format('svg');
+  src: url('iconfont.woff2?t=1682512995842') format('woff2'),
+       url('iconfont.woff?t=1682512995842') format('woff'),
+       url('iconfont.ttf?t=1682512995842') format('truetype'),
+       url('iconfont.svg?t=1682512995842#iconfont') format('svg');
 }
 
 .iconfont {
@@ -12,6 +12,46 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-xiaolian:before {
+  content: "\e627";
+}
+
+.icon-diqiu:before {
+  content: "\e689";
+}
+
+.icon-kafei:before {
+  content: "\e60a";
+}
+
+.icon-gangqin:before {
+  content: "\e653";
+}
+
+.icon-caidan:before {
+  content: "\e616";
+}
+
+.icon-aixin:before {
+  content: "\e601";
+}
+
+.icon-xiazai1:before {
+  content: "\e61a";
+}
+
+.icon-fenxiang:before {
+  content: "\e60f";
+}
+
+.icon-xiazai:before {
+  content: "\e60e";
+}
+
+.icon-shoucang:before {
+  content: "\e72c";
 }
 
 .icon-yonghu1:before {
